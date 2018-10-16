@@ -38,21 +38,15 @@
     <artifactId>json-simple</artifactId>
     <version>1.1.1</version>
 </dependency>
-<dependency>
-    <groupId>oracle.iot</groupId>
-    <artifactId>oracleIOT</artifactId>
-    <version>18.1.5.0.0.18</version>
-    <scope>system</scope>
-    <systemPath>/Users/alev/ApplicationIOT/OracleWioIOT/lib/iotcs/csl/javase/lib/device-library.jar</systemPath>
-</dependency>
-<dependency>
-    <groupId>oracle.iot</groupId>
-    <artifactId>oracleIOTJSON</artifactId>
-    <version>18.1.5.0.0.18</version>
-    <scope>system</scope>
-    <systemPath>/Users/alev/ApplicationIOT/OracleWioIOT/lib/iotcs/csl/javase/lib/json-20160212.jar</systemPath>
-</dependency>
-
-
+  	<dependency>
+  		<groupId>com.oracle.iot.client</groupId>
+  		<artifactId>device-library</artifactId>
+  		<version>18.3.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.json</groupId>
+  		<artifactId>json</artifactId>
+  		<version>20160212</version>
+  	</dependency>
   </dependencies>
 </project>

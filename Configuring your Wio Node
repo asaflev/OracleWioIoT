@@ -1,0 +1,11 @@
+The easiest way to to configure the Wio Node is via the iOS or Android apps. I
+did have problems with these with iOS 12 where the Wio Link app crashes during 
+the device setup process and on at least some versions of Android there are 
+timing errors in the wifo config steps
+If you can't get these to work then you can do the same process using the Wio
+command line tools, look at their github for details
+https://github.com/Seeed-Studio/wio-cli
+Note that the wio login process seems to have a bug in it in that it doesn't 
+update the $HOME/.wio/config.json file with the email address you used for the
+Wio global server account. You need to edit this file by gand and set the email 
+address, if you don't then devices that you add will not  
