@@ -1,5 +1,7 @@
 package oracle.wio.iot;
 
+import java.util.logging.Logger;
+
 import oracle.wio.iot.event.WioEvent;
 import oracle.wio.iot.sensor.Grove;
 import oracle.wio.iot.sensor.Humidity;
@@ -7,6 +9,7 @@ import oracle.wio.iot.sensor.Luminance;
 import oracle.wio.iot.sensor.Temperature;
 
 public class WioStream extends Thread {
+	private final static Logger logger = Logger.getLogger(WioStream.class.getName());
 
 	public WioStream() {
 		super();
@@ -30,9 +33,9 @@ public class WioStream extends Thread {
 
 		// Checking whether the thread is Daemon or not
 		if (Thread.currentThread().isDaemon()) {
-			System.out.println("Daemon thread executing");
+			logger.info("Daemon thread executing");
 		} else {
-			System.out.println("user(normal) thread executing");
+			logger.info("user(normal) thread executing");
 		}
 		String json;
 		while (true) {
@@ -40,9 +43,9 @@ public class WioStream extends Thread {
 			try {
 				json = WioUtilities.getInstance().read(WioConstants.LUMINANCE_INSTANCE_NAME,
 						WioConstants.LUMINANCE_PROPERTY_NAME);
-				System.out.println(json);
+				logger.finest("Try to read luminance returned " + json);
 				Luminance l = new Luminance(json);
-				System.out.println("val :" + l.getValue().floatValue());
+				logger.finer("Luminance value is " + l.getValue().floatValue());
 				RaiseWioEvent(l);
 			} catch (WioException e) {
 				// e.printStackTrace();
@@ -51,9 +54,9 @@ public class WioStream extends Thread {
 			try {
 				json = WioUtilities.getInstance().read(WioConstants.TEMPERATURE_INSTANCE_NAME,
 						WioConstants.TEMPERATURE_PROPERTY_NAME);
-				System.out.println(json);
+				logger.finest("Try to read temperature returned " + json);
 				Temperature t = new Temperature(json);
-				System.out.println("val :" + t.getValue().floatValue());
+				logger.finer("Temperature value is " + t.getValue().floatValue());
 				RaiseWioEvent(t);
 			} catch (WioException e) {
 				// e.printStackTrace();
@@ -62,16 +65,16 @@ public class WioStream extends Thread {
 			try {
 				json = WioUtilities.getInstance().read(WioConstants.HUMIDITY_INSTANCE_NAME,
 						WioConstants.HUMIDITY_PROPERTY_NAME);
-				System.out.println(json);
+				logger.finest("Try to read humidity returned " + json);
 				Humidity h = new Humidity(json);
-				System.out.println("val :" + h.getValue().floatValue());
+				logger.finer("Humidity value is " + h.getValue().floatValue());
 				RaiseWioEvent(h);
 			} catch (WioException e) {
 				// e.printStackTrace();
 			}
 
 			try {
-				Thread.currentThread().sleep(WioConstants.WIO_STREAM_FREQ);
+				sleep(WioConstants.WIO_STREAM_FREQ);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

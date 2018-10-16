@@ -1,0 +1,11 @@
+Not every sensor can work in every device location.
+The Wio Link app is aware of which sensors can be used where, but for ease of use we have also made assumptions in the code
+The following restrictions are in place (This is based on looking at the Wio Node with the USB power input at the back of the Wio  on the lower right)
+
+Left connector
+The LED Bar
+The Buzzer
+
+Right connector
+The Temp / Humidity sensor
+The Light (Luminance) sensor

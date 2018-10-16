@@ -14,7 +14,7 @@ public class WioConnectivityTest implements WioLabConstants {
 	public static void main(String args[]) {
 		logger.info("Starting");
 		// load in the security stuff
-		WioUtilities.getInstance().readWioProperties(CONFIG_FILE);
+		WioUtilities.getInstance().readWioProperties(WIO_CONFIG_FILE);
 		logger.info("Read wio device properties");
 		// Request the current luminance value
 		try {
