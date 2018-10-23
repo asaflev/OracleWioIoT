@@ -10,17 +10,17 @@ import oracle.wio.iot.sensor.Grove;
 import oracle.wio.iot.sensor.GroveInputSensor;
 import oracle.wio.iot.sensor.Luminance;
 
-public class WioLuminanceMonitor implements WioLabConstants {
+public class WioLuminanceMonitorComplete implements WioLabConstants {
 	public final static float LUMINANCE_THRESHOLD = 500;
-	private final static Logger logger = Logger.getLogger(WioLuminanceMonitor.class.getName());
+	private final static Logger logger = Logger.getLogger(WioLuminanceMonitorComplete.class.getName());
 
-	public WioLuminanceMonitor() {
+	public WioLuminanceMonitorComplete() {
 	}
 
 	public static void main(String args[]) {
 		logger.info("Starting");
 		// create the monitor to process the data
-		WioLuminanceMonitor monitor = new WioLuminanceMonitor();
+		WioLuminanceMonitorComplete monitor = new WioLuminanceMonitorComplete();
 		// load in the security stuff
 		WioUtilities.getInstance().readWioProperties(WIO_CONFIG_FILE);
 		logger.info("Read wio device properties");

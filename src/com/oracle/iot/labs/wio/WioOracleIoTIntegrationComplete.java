@@ -2,7 +2,6 @@ package com.oracle.iot.labs.wio;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import oracle.iot.client.DeviceModel;
@@ -20,37 +19,58 @@ import oracle.wio.iot.sensor.LedBar;
 import oracle.wio.iot.sensor.Luminance;
 import oracle.wio.iot.sensor.Temperature;
 
-public class WioOracleIoTIntegration implements WioLabConstants {
+public class WioOracleIoTIntegrationComplete implements WioLabConstants {
 	public final static float LUMINANCE_THRESHOLD = 500;
-	private final static Logger logger = Logger.getLogger(WioOracleIoTIntegration.class.getName());
+	private final static Logger logger = Logger.getLogger(WioOracleIoTIntegrationComplete.class.getName());
 	private DirectlyConnectedDevice wioDirectlyConnectedDevice;
 	private String wioDeviceEndpointId;
 	private DeviceModel wioDeviceModel;
 	private VirtualDevice wioVirtualDevice;
 
-	public WioOracleIoTIntegration(String provisioningFilePath, String provisioningFilePassword)
+	public WioOracleIoTIntegrationComplete(String provisioningFilePath, String provisioningFilePassword)
 			throws GeneralSecurityException, IOException {
+		// Create a directly connected device using the provisioning file details. This
+		// knows how to communicate with the IoT Cloud service.
 		wioDirectlyConnectedDevice = new DirectlyConnectedDevice(provisioningFilePath, provisioningFilePassword);
+		// If the device has not been activated do so, registering it to use the
+		// WIO_DEVICE_URN as the data formats
 		if (!wioDirectlyConnectedDevice.isActivated()) {
 			wioDirectlyConnectedDevice.activate(WioConstants.WIO_DEVICE_URN);
 		}
+		// Get the identifier of the device
 		wioDeviceEndpointId = wioDirectlyConnectedDevice.getEndpointId();
+		// Use the directly connected device to get the device model (data format) for
+		// the Wio
 		wioDeviceModel = wioDirectlyConnectedDevice.getDeviceModel(WioConstants.WIO_DEVICE_URN);
+		// Create a virtual device form the endpoint and the model. The virtual device
+		// an be used to update the values in the IoT Cloud service, and also to receive
+		// commands to be forwarded to the Wio. It can also support Alerts, IoT
+		// initiated attribute value changes and additional data formats if desired, but
+		// for this exercise we're not using those.
 		wioVirtualDevice = wioDirectlyConnectedDevice.createVirtualDevice(wioDeviceEndpointId, wioDeviceModel);
 	}
 
 	private void registerIoTCommandListeners() {
 		// We are only registered for a single virtual device, so we will only get
 		// callbacks for that specific device, thus we can ignore the virtual device
-		// data we're provided with here. If we had multple virtual devices we'd need to
-		// keep track of them and work out which device was relevant
+		// data we're provided with here. If we had multiple virtual devices we'd need
+		// to keep track of them and work out which device was relevant
+		//
+		// We're using a Lambda here, but anything that implements the Callable
+		// interface is fine (including anonymous inner classes)
 		wioVirtualDevice.setCallable(IOT_BUZZER_COMMAND,
-				(VirtualDevice vDev, String buzzerData) -> processBuzzer(buzzerData));
+				(VirtualDevice vDev, String buzzerData) -> processBuzzerCmd(buzzerData));
 		wioVirtualDevice.setCallable(IOT_LEDBAR_COMMAND,
-				(VirtualDevice vDev, String ledBarData) -> processLedBar(ledBarData));
+				(VirtualDevice vDev, String ledBarData) -> processLedBarCmd(ledBarData));
 	}
 
-	private void processBuzzer(String buzzerData) {
+	/**
+	 * This decodes the String from the IoT cloud service and splits it into
+	 * frequency and duration for us
+	 * 
+	 * @param buzzerData
+	 */
+	private void processBuzzerCmd(String buzzerData) {
 		// the full buzzer data is a string frequency / ms duration.
 		int frequency = 450;
 		int duration = 1000;
@@ -81,7 +101,17 @@ public class WioOracleIoTIntegration implements WioLabConstants {
 					+ ") as an integer, cannot proceed, " + nfe.getMessage());
 			return;
 		}
-		// got the data, sound the buzzer
+		processBuzzer(frequency, duration);
+	}
+
+	/**
+	 * Actually cause the buzzer to sound
+	 * 
+	 * @param frequency
+	 * @param duration
+	 */
+	public void processBuzzer(int frequency, int duration) {
+		// create a buzzer
 		Buzzer buzzer = new Buzzer();
 		// send the data
 		try {
@@ -91,7 +121,13 @@ public class WioOracleIoTIntegration implements WioLabConstants {
 		}
 	}
 
-	private void processLedBar(String ledBarData) {
+	/**
+	 * This decodes the string from the IoT cloud service and converts it into the
+	 * LED display value for us
+	 * 
+	 * @param ledBarData
+	 */
+	private void processLedBarCmd(String ledBarData) {
 		// set the led bad data, if it's null or doesn't parse as an Integer, warn and
 		// give up
 		// if it's empty default to 0 (turns the LEDs off)
@@ -112,6 +148,16 @@ public class WioOracleIoTIntegration implements WioLabConstants {
 				return;
 			}
 		}
+		processLedBar(leds);
+	}
+
+	/**
+	 * Trigger the LED bar to display
+	 * 
+	 * @param leds
+	 */
+	public void processLedBar(int leds) {
+		// create a LED device
 		LedBar ledBar = new LedBar();
 		try {
 			ledBar.setValue(leds);
@@ -120,7 +166,7 @@ public class WioOracleIoTIntegration implements WioLabConstants {
 		}
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws GeneralSecurityException, IOException {
 		if (args.length < 2) {
 			logger.severe("Must run this program with arguments <provisioning file path> <provisioning file password>");
 			System.exit(-1);
@@ -136,22 +182,22 @@ public class WioOracleIoTIntegration implements WioLabConstants {
 		// setup the
 		String provisioningFilePath = args[0];
 		String provisioningFilePassword = args[1];
-		// create the monitor to process the data
-		try {
-			WioOracleIoTIntegration monitor = new WioOracleIoTIntegration(provisioningFilePath,
-					provisioningFilePassword);
-			// have to do this here, to ensure that monitor is effectively final (It's a
-			// Lambda requirement.)
-			stream.wioEvent.addListener("onWioEvent", (event) -> monitor.onWioEvent(event));
-			logger.info("Added Wio eventListener");
-			monitor.registerIoTCommandListeners();
-			logger.info("Registered IoT callbacks");
-		} catch (GeneralSecurityException | IOException e) {
-			logger.log(Level.SEVERE, "Exception creating WioOracleIoTIntegration instance", e);
-			System.exit(-2);
-		}
+
+		// Note that we would normally do something to handle the possible exceptions
+		// but for simplicity we just throw them all
+		WioOracleIoTIntegrationComplete monitor = new WioOracleIoTIntegrationComplete(provisioningFilePath,
+				provisioningFilePassword);
+		stream.wioEvent.addListener("onWioEvent", (event) -> monitor.onWioEvent(event));
+		logger.info("Added Wio eventListener");
+		monitor.registerIoTCommandListeners();
+		logger.info("Registered IoT callbacks");
 	}
 
+	/**
+	 * Process the events from the Wio stream and do something with them
+	 * 
+	 * @param e
+	 */
 	public void onWioEvent(Grove e) {
 		GroveInputSensor s = (GroveInputSensor) e;
 		logger.info("Got Event - " + s.getProperty() + ", value: " + s.getValue());
