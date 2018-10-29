@@ -2,3 +2,6 @@
 /target/**
 **.class
 /classes/
+/persistence_store/
+/target/
+/derby.log
