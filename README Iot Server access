@@ -1,0 +1,11 @@
+If your lab is using an IoT Server running in Ravello you will need to take the following actions
+
+1/ Make sure that you have edited your hosts file and put an entry in there for the iot server
+e.g.
+129.146.89.93	iotserver
+This is because the provisioning files produced by the IOT server embedd the name of the server in the URL
+
+2/ Set the JVM SSL properties to use the provided truststore, this is part of the JVM run configuration (in 
+Eclipse) or in the command line this comes *before* any program arguments
+E.g. 
+java -Djavax.net.ssl.trustStore=WioTruststore.jks -Djavax.net.ssl.trustStorePassword=secret

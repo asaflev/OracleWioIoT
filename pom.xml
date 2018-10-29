@@ -41,8 +41,13 @@
   	<dependency>
   		<groupId>com.oracle.iot.client</groupId>
   		<artifactId>device-library</artifactId>
-  		<version>17.4.5</version>
+  		<version>18.3.1</version>
   	</dependency>
+  	<dependency>
+    	<groupId>org.apache.derby</groupId>
+    	<artifactId>derby</artifactId>
+    	<version>10.11.1.1</version>
+	</dependency>
   	<dependency>
   		<groupId>org.json</groupId>
   		<artifactId>json</artifactId>
