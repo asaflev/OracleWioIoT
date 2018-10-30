@@ -1,18 +1,22 @@
-The device-library.jar file comes from Oracle, but it's not available via Maven.
+The device-library.jar file comes from Oracle, but it's not available via public Maven repositories.
 So we need to add it to the local Maven repository to enable the runtime to locate it.
-You need to download the device library for the versio of the IOT Cloud service you are using.
+
+For this workshop we are using vewrsion 18.3.1 of the IoT server. The relevant jar files are in the project
+export in the lib/jars folder.  The other dependencies (Derby and json.org) are available via Maven, but
+are also in the folder for non Maven users.
+
 To add it into the local Maven remo (Usualy in $HOME/.m2/repository) run the following command
 CLEARLY YOU NEED TO ADJUST BASED ON THE ACTUAL VERSIONS, PATHNAMES ETC.
 
 mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> \
         -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
     
-For example (this is the device-library, but the enterprise-library will also need to be added for projects which use it)
+For example
 
 mvn install:install-file -Dfile=$HOME/Downloads/iotcs/18.3.1/csl/javase/lib/device-library.jar  -Dpackaging=jar -DgroupId=com.oracle.iot.client \
         -DartifactId=device-library -Dversion=18.3.1
         
-There also needs to be a dependency in the pom.xml file (that shoudl be in place, but the version number may need updating
+There also needs to be a dependency in the pom.xml file (that should be in place, but check the version number)
 
   	<dependency>
   		<groupId>com.oracle.iot.client</groupId>
