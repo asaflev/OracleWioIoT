@@ -22,6 +22,7 @@ public class WioUtilities {
 	private Client _restClient = ClientBuilder.newClient();
 	private String _wioServerURL = WioConstants.WIO_URL;
 	private String _wioToken = WioConstants.WIO_TOKEN;
+	@SuppressWarnings("unused")
 	private JSONArray _wioIoTDevice = WioConstants.WIO_IOT_DEVICE;
 
 	private WioUtilities() {
@@ -66,6 +67,7 @@ public class WioUtilities {
 			Object obj = parser.parse(new FileReader(filename));
 
 			JSONObject jsonObject = (JSONObject) obj;
+			@SuppressWarnings("rawtypes")
 			Set keys = jsonObject.keySet();
 
 			if (keys.contains("location"))

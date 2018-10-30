@@ -120,6 +120,7 @@ public class WioOracleIoTIntegrationSkeleton implements WioLabConstants {
 	 * 
 	 * @param ledBarData
 	 */
+	@SuppressWarnings("unused")
 	private void processLedBarCmd(String ledBarData) {
 		// set the led bad data, if it's null or doesn't parse as an Integer, warn and
 		// give up

@@ -17,6 +17,7 @@ public class WioLuminanceToLEDSkeleton implements WioLabConstants {
 	public static void main(String args[]) {
 		logger.info("Starting");
 		// create the monitor to process the data
+		@SuppressWarnings("unused")
 		WioLuminanceToLEDSkeleton monitor = new WioLuminanceToLEDSkeleton();
 		// load in the security stuff
 		WioUtilities.getInstance().readWioProperties(WIO_CONFIG_FILE);

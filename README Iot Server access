@@ -8,4 +8,4 @@ This is because the provisioning files produced by the IOT server embedd the nam
 2/ Set the JVM SSL properties to use the provided truststore, this is part of the JVM run configuration (in 
 Eclipse) or in the command line this comes *before* any program arguments
 E.g. 
-java -Djavax.net.ssl.trustStore=WioTruststore.jks -Djavax.net.ssl.trustStorePassword=secret
+java -Djavax.net.ssl.trustStore=WioTruststore.jks -Djavax.net.ssl.trustStorePassword=secret -jar mycodejar dev-TG-101 V3rryS3cr3t
